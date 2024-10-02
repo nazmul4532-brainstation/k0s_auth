@@ -1,0 +1,106 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: dev-sa
+  namespace: kube-system
+secrets:
+- name: dev-role-token
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: dev-role 
+rules:
+  # Nodes: Only view
+  - apiGroups: [""]  # Core API group
+    resources: ["nodes"]
+    verbs: ["get", "list", "watch"]  # Only view permissions
+
+  # Pods: Full permissions
+  - apiGroups: [""]  # Core API group
+    resources: ["pods"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]  # Full permissions for pods
+
+  # Deployments, DaemonSets, ReplicaSets, StatefulSets: All except delete
+  - apiGroups: ["apps"]  # Apps group
+    resources: ["deployments", "daemonsets", "replicasets", "statefulsets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]  # No delete
+
+  # Jobs and CronJobs: All except delete
+  - apiGroups: ["batch"]  # Batch group for jobs
+    resources: ["jobs", "cronjobs"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]  # No delete
+
+  # ConfigMaps and Secrets: Full permissions
+  - apiGroups: [""]  # Core API group
+    resources: ["configmaps", "secrets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]  # Full permissions
+
+  # Services and Endpoints: All except delete
+  - apiGroups: [""]  # Core API group
+    resources: ["services", "endpoints"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]  # No delete
+
+  # Ingress: All except delete
+  - apiGroups: ["networking.k8s.io"]  # Networking group
+    resources: ["ingresses"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]  # No delete
+
+  # Ingress Class: Only view
+  - apiGroups: ["networking.k8s.io"]  # Networking group
+    resources: ["ingressclasses"]
+    verbs: ["get", "list", "watch"]  # Only view permissions
+
+  # Port forwarding: Full permissions
+  - apiGroups: [""]  # Core API group
+    resources: ["pods/portforward"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]  # Port-forwarding enabled
+
+  # PVC (PersistentVolumeClaims): No delete, patch, or update
+  - apiGroups: [""]  # Core API group
+    resources: ["persistentvolumeclaims"]
+    verbs: ["get", "list", "watch", "create"]  # No delete, patch, or update
+
+  # PV (PersistentVolumes): No delete, patch, or update
+  - apiGroups: [""]  # Core API group
+    resources: ["persistentvolumes"]
+    verbs: ["get", "list", "watch"]  # No delete, patch, or update
+
+  # StorageClass: No delete, patch, or update
+  - apiGroups: ["storage.k8s.io"]  # Storage group
+    resources: ["storageclasses"]
+    verbs: ["get", "list", "watch"]  # No delete, patch, or update
+
+  # Namespace: No delete
+  - apiGroups: [""]  # Core API group
+    resources: ["namespaces"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]  # No delete
+
+  # Events: Full permissions
+  - apiGroups: [""]  # Core API group
+    resources: ["events"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]  # Full permissions for events
+
+  # Helm Chart: Only view (No delete)
+  - apiGroups: [""]  # Helm-related resources
+    resources: ["configmaps", "secrets"]  # Assuming Helm releases stored in configmaps/secrets
+    verbs: ["get", "list", "watch"]  # Only view Helm charts
+
+  # Helm Releases: Only view (No delete)
+  - apiGroups: [""]  # Helm-related resources
+    resources: ["configmaps", "secrets"]  # Assuming Helm releases stored in configmaps/secrets
+    verbs: ["get", "list", "watch"]  # Only view Helm releases
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: dev-role-binding
+subjects:
+- kind: ServiceAccount
+  name: dev-sa
+  namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: dev-role
+  apiGroup: rbac.authorization.k8s.io
