@@ -53,7 +53,7 @@ rules:
 
   - apiGroups: [""]
     resources: ["configmaps", "secrets"]
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]  
+    verbs: ["get", "list", "watch", "create", "update", "patch"]  
 
   - apiGroups: [""]  
     resources: ["services", "endpoints"]
@@ -69,7 +69,7 @@ rules:
 
   - apiGroups: [""]
     resources: ["pods/portforward"]
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+    verbs: ["*"]
 
   - apiGroups: [""]
     resources: ["persistentvolumeclaims"]
@@ -89,7 +89,7 @@ rules:
 
   - apiGroups: [""] 
     resources: ["events"]
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"] 
+    verbs: ["*"] 
 
   - apiGroups: ["helm.k8s.io"]
     resources: ["charts"]
