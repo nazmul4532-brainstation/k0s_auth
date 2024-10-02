@@ -11,85 +11,69 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: dev-role 
 rules:
-  # Nodes: Only view
-  - apiGroups: [""]  # Core API group
+  - apiGroups: [""]  
     resources: ["nodes"]
-    verbs: ["get", "list", "watch"]  # Only view permissions
+    verbs: ["get", "list", "watch"]  
 
-  # Pods: Full permissions
-  - apiGroups: [""]  # Core API group
+  - apiGroups: [""] 
     resources: ["pods"]
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]  # Full permissions for pods
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"] 
 
-  # Deployments, DaemonSets, ReplicaSets, StatefulSets: All except delete
-  - apiGroups: ["apps"]  # Apps group
+  - apiGroups: ["apps"]  
     resources: ["deployments", "daemonsets", "replicasets", "statefulsets"]
-    verbs: ["get", "list", "watch", "create", "update", "patch"]  # No delete
+    verbs: ["get", "list", "watch", "create", "update", "patch"]  
 
-  # Jobs and CronJobs: All except delete
-  - apiGroups: ["batch"]  # Batch group for jobs
+  - apiGroups: ["batch"]  
     resources: ["jobs", "cronjobs"]
-    verbs: ["get", "list", "watch", "create", "update", "patch"]  # No delete
+    verbs: ["get", "list", "watch", "create", "update", "patch"]  #
 
-  # ConfigMaps and Secrets: Full permissions
-  - apiGroups: [""]  # Core API group
+  - apiGroups: [""]
     resources: ["configmaps", "secrets"]
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]  # Full permissions
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]  
 
-  # Services and Endpoints: All except delete
-  - apiGroups: [""]  # Core API group
+  - apiGroups: [""]  
     resources: ["services", "endpoints"]
-    verbs: ["get", "list", "watch", "create", "update", "patch"]  # No delete
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
 
-  # Ingress: All except delete
-  - apiGroups: ["networking.k8s.io"]  # Networking group
+  - apiGroups: ["networking.k8s.io"]
     resources: ["ingresses"]
-    verbs: ["get", "list", "watch", "create", "update", "patch"]  # No delete
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
 
-  # Ingress Class: Only view
-  - apiGroups: ["networking.k8s.io"]  # Networking group
+  - apiGroups: ["networking.k8s.io"] 
     resources: ["ingressclasses"]
-    verbs: ["get", "list", "watch"]  # Only view permissions
+    verbs: ["get", "list", "watch"] 
 
-  # Port forwarding: Full permissions
-  - apiGroups: [""]  # Core API group
+  - apiGroups: [""]
     resources: ["pods/portforward"]
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]  # Port-forwarding enabled
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 
-  # PVC (PersistentVolumeClaims): No delete, patch, or update
-  - apiGroups: [""]  # Core API group
+  - apiGroups: [""]
     resources: ["persistentvolumeclaims"]
-    verbs: ["get", "list", "watch", "create"]  # No delete, patch, or update
+    verbs: ["get", "list", "watch", "create"] 
 
-  # PV (PersistentVolumes): No delete, patch, or update
-  - apiGroups: [""]  # Core API group
+  - apiGroups: [""] 
     resources: ["persistentvolumes"]
-    verbs: ["get", "list", "watch"]  # No delete, patch, or update
+    verbs: ["get", "list", "watch"]  
 
-  # StorageClass: No delete, patch, or update
-  - apiGroups: ["storage.k8s.io"]  # Storage group
+  - apiGroups: ["storage.k8s.io"] 
     resources: ["storageclasses"]
-    verbs: ["get", "list", "watch"]  # No delete, patch, or update
+    verbs: ["get", "list", "watch"]  
 
-  # Namespace: No delete
-  - apiGroups: [""]  # Core API group
+  - apiGroups: [""] 
     resources: ["namespaces"]
-    verbs: ["get", "list", "watch", "create", "update", "patch"]  # No delete
+    verbs: ["get", "list", "watch", "create", "update", "patch"]  
 
-  # Events: Full permissions
-  - apiGroups: [""]  # Core API group
+  - apiGroups: [""] 
     resources: ["events"]
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]  # Full permissions for events
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"] 
 
-  # Helm Chart: Only view (No delete)
-  - apiGroups: [""]  # Helm-related resources
-    resources: ["configmaps", "secrets"]  # Assuming Helm releases stored in configmaps/secrets
-    verbs: ["get", "list", "watch"]  # Only view Helm charts
+  - apiGroups: ["helm.k8s.io"]
+    resources: ["charts"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
 
-  # Helm Releases: Only view (No delete)
-  - apiGroups: [""]  # Helm-related resources
-    resources: ["configmaps", "secrets"]  # Assuming Helm releases stored in configmaps/secrets
-    verbs: ["get", "list", "watch"]  # Only view Helm releases
+  - apiGroups: ["helm.k8s.io"]
+    resources: ["releases"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
