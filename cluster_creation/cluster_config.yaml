@@ -9,12 +9,12 @@ spec:
       kind: ClusterConfig
       spec:
         api:
-            address: 10.10.3.10
-            externalAddress: 10.10.3.10
+            address: 10.10.3.12
+            externalAddress: 10.10.3.12
             k0sApiPort: 9443
             port: 6443
             sans:
-              - 10.10.3.10
+              - 10.10.3.12
               - 100.103.73.112 
               - 100.115.125.107
               - 172.16.106.4
@@ -31,7 +31,7 @@ spec:
           kuberouter: null   
   hosts:
     - ssh:
-        address: 10.10.3.10
+        address: 10.10.3.12
         user: bsfintech
         port: 22
         keyPath: ~/ssh/bsfintechtest
@@ -39,7 +39,7 @@ spec:
       installFlags:
         - --disable-components=metrics-server,kube-proxy
     - ssh:
-        address: 10.10.3.11
+        address: 10.10.3.13
         user: bsfintech
         port: 22
         keyPath: ~/ssh/bsfintechtest

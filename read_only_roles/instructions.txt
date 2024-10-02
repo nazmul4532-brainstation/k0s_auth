@@ -2,14 +2,28 @@
 
 #dev-kubeconfig and ca.cert files will originally not be there.
 
-kubectl apply -f dev_sa_role_rolebinding.yaml 
-kubectl apply -f dev_sa_token_secret.yaml 
-kubectl get configmap -n kube-system kube-root-ca.crt -o jsonpath='{.data.ca\.crt}' > ca.crt
-kubectl config set-cluster kubernetes --server=https://10.10.3.10:6443 --certificate-authority=./ca.crt --embed-certs=true --kubeconfig=dev-kubeconfig
+#Creating a Namespace KeyCloak for testing purposes
+kubectl create namespace keycloak
 
-kubectl config set-context dev-context --cluster=kubernetes --user=dev-sa --namespace=kube-system --kubeconfig=dev-kubeconfig
+#Applying the set configurations for ServiceAccount referencing a secret, Cluster Role, and Binding the Cluster Roles. 
+#Additionally creating a secret that generates a token
+kubectl apply -f dev_sa_role_rolebinding.yaml
+kubectl apply -f dev_sa_token_secret.yaml 
+
+#Generating a Dev-SA KubeConfig
+#Embedding the API Server Address and CA data into the config
+kubectl get configmap -n kube-system kube-root-ca.crt -o jsonpath='{.data.ca\.crt}' > ca.crt
+kubectl config set-cluster nazz-cluster --server=https://10.10.3.12:6443 --certificate-authority=./ca.crt --embed-certs=true --kubeconfig=dev-kubeconfig
+
+#Creating and Setting a Context for the kubeconfig
+kubectl config set-context dev-context --cluster=nazz-cluster --user=dev-sa --namespace=kube-system --kubeconfig=dev-kubeconfig
 kubectl config use-context dev-context --kubeconfig=dev-kubeconfig
 
+#Authenticating user, by using the token generated, automatically fetching via pipe
+kubectl describe secret/dev-role-token -n kube-system | sed -n 's/^token: //p' | xargs -I {} kubectl config set-credentials dev-sa --token={} --kubeconfig=dev-kubeconfig
+
+
+##No longer needed if pipe works
 #get token
-kubectl describe secret/dev-role-token -n kube-system
-kubectl config set-credentials dev-sa --token=<dev-sa-token> --kubeconfig=dev-kubeconfig
+#kubectl describe secret/dev-role-token -n kube-system
+#kubectl config set-credentials dev-sa --token=<dev-sa-token> --kubeconfig=dev-kubeconfig
