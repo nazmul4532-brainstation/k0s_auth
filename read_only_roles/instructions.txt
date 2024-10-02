@@ -2,8 +2,8 @@
 
 #dev-kubeconfig and ca.cert files will originally not be there.
 
-kubectl apply -f dev_sa_role_rolebinding.yaml -n kube-system
-kubectl apply -f dev_sa_token_secret.yaml -n kube-system
+kubectl apply -f dev_sa_role_rolebinding.yaml 
+kubectl apply -f dev_sa_token_secret.yaml 
 kubectl get configmap -n kube-system kube-root-ca.crt -o jsonpath='{.data.ca\.crt}' > ca.crt
 kubectl config set-cluster kubernetes --server=https://10.10.3.10:6443 --certificate-authority=./ca.crt --embed-certs=true --kubeconfig=dev-kubeconfig
 
