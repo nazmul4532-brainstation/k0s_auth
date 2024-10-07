@@ -34,7 +34,7 @@ spec:
         address: 10.10.3.10
         user: bsfintech
         port: 22
-        keyPath: ~/ssh/bsfintechtest
+        keyPath: ~/.ssh/bsfintechtest
       role: controller
       installFlags:
         - --disable-components=metrics-server,kube-proxy
@@ -42,6 +42,6 @@ spec:
         address: 10.10.3.11
         user: bsfintech
         port: 22
-        keyPath: ~/ssh/bsfintechtest
+        keyPath: ~/.ssh/bsfintechtest
       role: worker
 
