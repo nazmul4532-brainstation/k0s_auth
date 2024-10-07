@@ -1,0 +1,31 @@
+
+helm install openebs openebs-internal/openebs --namespace openebs --create-namespace
+
+kubectl patch storageclass openebs-hostpath -p '{"metadata": {"annotations": {"storageclass.kubernetes.io/is-default-class":"true"}}}'
+
+helm install openebs-nfs-wordpress stable/nfs-server-provisioner --namespace openbs-nfs -f nfs-values.yaml
+
+##helm install my-nfs-provisioner bitnami/nfs-server-provisioner --namespace openbs-nfs
+
+
+##helm install openebs-nfs openebs/nfs-provisioner --namespace openbs-nfs -f nfs-values.yaml
+
+kubectl apply -f test.yaml
+
+
+
+
+##This is to test proper conifugration of RWX
+❯ kubectl exec -it nginx-nfs-test-fbf7c69cc-hkpdz -- bash
+root@nginx-nfs-test-fbf7c69cc-hkpdz:/# echo "Hello from NFS!" > /usr/share/nginx/html/index.html
+root@nginx-nfs-test-fbf7c69cc-hkpdz:/# exit
+exit
+❯ kubectl exec -it nginx-nfs-test-fbf7c69cc-l9js9 -- cat /usr/share/nginx/html/index.html
+
+Hello from NFS!
+
+
+
+
+
+

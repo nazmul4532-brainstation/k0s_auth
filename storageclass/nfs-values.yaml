@@ -1,0 +1,7 @@
+persistence:
+  enabled: true
+  storageClass: openebs-hostpath
+  size: 10Gi
+storageClass:
+  name: openbs-nfs-sc
+  provisionerName: openebs.io/nfs
