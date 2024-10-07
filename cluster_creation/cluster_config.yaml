@@ -28,13 +28,13 @@ spec:
           podCIDR: 10.244.0.0/16
           serviceCIDR: 10.245.0.0/16
           calico: null
-          kuberouter: null   
+          kuberouter: null  
   hosts:
     - ssh:
         address: 10.10.3.12
         user: bsfintech
         port: 22
-        keyPath: ~/ssh/bsfintechtest
+        keyPath: ~/.ssh/bsfintechtest
       role: controller
       installFlags:
         - --disable-components=metrics-server,kube-proxy
@@ -42,6 +42,5 @@ spec:
         address: 10.10.3.13
         user: bsfintech
         port: 22
-        keyPath: ~/ssh/bsfintechtest
+        keyPath: ~/.ssh/bsfintechtest
       role: worker
-

@@ -1,0 +1,45 @@
+##THE CONFIGURATION FILE IS NEEDED TO DO THESE
+##I AM UNSURE IF IT WILL WORK IN A SETUP WITH MULTIPLE NODES
+
+#METHOD 1: Backup from controller method
+##Backing Up
+Inside Control Node
+sudo /usr/local/bin/k0s backup --save-path ~/backup
+sudo scp k0s_backup_<META_DATA_GENERATION_TIME>.tar.gz nazmul@172.16.106.232:~/Desktop/backup/k0s_backup_<META_DATA_GENERATION_TIME>.tar.gz
+
+##Resetting Cluster
+k0sctl reset --config cluster_config.yaml
+
+##Restoring from Backup
+k0sctl apply --config cluster_config.yaml --restore-from ~/Desktop/backup/k0s_backup_<META_DATA_GENERATION_TIME>.tar.gz
+
+### If needed, restart the k0scontroller and k0sworker
+
+
+#METHOD 2: K0sctl method
+
+##Backing Up
+k0sctl backup --config cluster_config.yaml
+
+##Resetting Cluster
+k0sctl reset --config cluster_config.yaml
+
+##Restoring from Backup
+k0sctl apply --config cluster_config.yaml --restore-from k0s_backup_<Random-Numbers>.tar.gz
+
+### If needed, restart the k0scontroller and k0sworker
+
+
+##For Persistence test
+##install openbs storage class
+
+helm repo add openebs-internal https://openebs.github.io/charts                                                      
+helm repo update
+helm install openebs openebs-internal/openebs --namespace openebs --create-namespace --version "3.9.0" -f values.yaml
+
+##Preexisiting Configuration Files
+helm install redis bitnami/redis
+kubectl apply -f redis-insight
+
+##Port forward redis-insight to access site
+Insert dummy values in redis
