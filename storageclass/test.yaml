@@ -8,7 +8,7 @@ spec:
   resources:
     requests:
       storage: 1Gi  # You can modify this size as needed
-  storageClassName: openbs-nfs-sc
+  storageClassName: openebs-rwx
 ---
 apiVersion: apps/v1
 kind: Deployment
