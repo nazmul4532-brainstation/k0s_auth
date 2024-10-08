@@ -10,7 +10,7 @@ kubectl get configmap -n kube-system kube-root-ca.crt -o jsonpath='{.data.ca\.cr
 kubectl config set-cluster nazz-cluster --server=https://10.10.3.10:6443 --certificate-authority=./ca.crt --embed-certs=true --kubeconfig=admin-kubeconfig
 
 #Creating and Setting a Context for the kubeconfig
-kubectl config set-context admin-context --cluster=nazz-cluster --user=admin-sa --namespace=kube-system --kubeconfig=admin-kubeconfig
+kubectl config set-context admin-context --cluster=nazz-cluster --user=admin-sa --kubeconfig=admin-kubeconfig
 kubectl config use-context admin-context --kubeconfig=admin-kubeconfig
 
 #Authenticating user, by using the token generated, automatically fetching via pipe
