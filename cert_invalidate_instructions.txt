@@ -1,0 +1,76 @@
+##Optional..
+#If we would like, we can block a particular ca by putting them in the block store
+
+##First, Create Backups in Controller Node.
+mkdir backup
+mkdir backup
+
+sudo su
+cd /var/lib/k0s/
+mv ./pki/* /home/bsfintech/backup/
+rm -rf pki
+
+##After Removing pki, if the k0scontroller is restarted, the pki is newly generated
+sudo systemctl daemon-reload
+sudo systemctl restart k0scontroller
+
+##Adding newly generated kubernetes-ca to the trust store
+cd pki
+sudo trust anchor --store ca.crt
+sudo update-ca-trust extract
+
+##Adding newly generated etcd-ca to the trust store
+cd etcd
+sudo trust anchor --store ca.crt
+sudo update-ca-trust extract
+
+sudo systemctl daemon-reload
+sudo systemctl restart k0scontroller
+
+sudo systemctl daemon-reload
+sudo systemctl restart k0sworker 
+
+
+##Copy Newly generated API ca.crt (the one in /var/lib/k0s/pki folder) to the worker node...
+cd ../
+cp ca.crt
+
+##Generating worker join token
+sudo /usr/local/bin/k0s token create --role worker
+
+
+###In Worker Node
+##Paste the new worker token here
+sudo vi /etc/k0s/k0stoken
+
+
+##This section needs further clarification ig? i don't know which things need to be updated
+cd /var/lib/k0s
+mv ./* /home/bsfintech/backup/
+rm -rf ./*
+
+sudo systemctl daemon-reload
+sudo systemctl restart k0sworker
+
+cd pki
+##Paste the new ca.crt here
+vi ca.crt 
+##Adding new kubernetes-ca to the trust store
+sudo trust anchor --store ca.crt
+sudo update-ca-trust extract
+
+sudo systemctl daemon-reload
+sudo systemctl restart k0sworker 
+
+
+
+
+
+
+
+
+
+#"Nice to haves"
+openssl x509 -in /var/lib/k0s/pki/ca.crt -text -noout
+echo "H4sIAAAAAAAC/2yV0Y7iOhKG7/speIGZYydkdkDai5NgA6bjTByXTXyXxOkO2IFMSDc0q333VXP6SLvS3pWrSt9vWdb/V8NBtePlcD4tZ+/4qfFvl6kdL8unb7Ovevk0m81mTTtOh5dDU03tt+pt6s7jYfr4ZqupWs6eCzQ9FzgRYJk8xCuhGBRgWI4oiMcMTYnDrAARC8JXuVaDQTQsgMUGeVXoBc7IYq7wGdfrK7YbFzV7/kO4RZTuhUi9FRYJoWF4rvHAqo05SkeFgOsu9zS2yBKhLM893eSSKgF0LiHqUmwG7budVUMJ/e3YSvpbKxEbMGG68ZkgKpRKiJZgAnvPBWGdODXX9nX4e8b+eyaBnVpifudKJQZFOneUKyL2dkVNrUxU9lindCjlXpjUqdAEllaA45TYFYR0k3jOyiMnACrJFVU5EFQAIxbRx26B6PvnmwDkc8CCFWGDajIgkCwVkvXyTt+y9SDzYH63yqylQ5F1P3e2/xkV5OfNeHerZfdLnuI97yMNPZMVpVGmh1upt5Hd+AsnmDbrxYr3PMtDLyRhXamtM310bFb8N9DXUGIvRD7g3T2GFmginJINoJG7aLMLrrhdR29i1Y05ZqhWHMRRYXmnWbOxVBGeKLmdgyvH1iuZSS/qZPLFacg53FjiWWZDscrDbm6AvnPSzc1h0RlsnAg6X+kmEhtxzzZ/BnrPnT6aIIXLe3k3PwpAY3qiP/jRKxF2WifTtnRiz/15t7ursbgL1wTRyKV5lqRE1olQapqIVRy2ey7ajX8WCO8V3LqWqJIHAwXlbiLwBDb0mMIQVyFj/GjeLTFDlQ/b3OFtKdVBUaEMWvjUdx91CEFLWVYQBZnsKKDFrxLEtgKOIPB5CyziTiDTLzal9JdcW547GotgEJVjceJwzImNU6Wc2FiaHxYhgIot8kneDzEQdpLebMHhJNflXACDHEQM8PouYXsViNyUFsRgus8dk42iZxm87qpVjIzm2S6EoFgxkQe+q3wX6hW7KEKzvLdjo7uxgiay9/jzD96Fo7FEPP7UT0OWKn1+LzDg9mTvsGJB/ec5klSgpoe5AX4Va0as578rNA/rFZsrNIhmxQdQr1FKoqohvhJHcaz6zjcbf8ion/TKHjPd8QJ1wnjxwyLmE8dZHvptLf2hkeqeIiEbEpnCn+8FoBv0VyxRPs+PCvEA7jJYxE3PriKM91JHhusIQ2CyMrBhEcxv5uPnB0flrlWxVGuuU9r5EnVJ01vNtZqkzueaDINcbz8qKnZVMskM0jBF3RX8KwLN+mJtr/lereqV6hrEbpZcUeqH8+467KwTR+EW19QzVjqfFAGTKuSk7qOb0pGo9zStNv5eU7pNdbctULRN+yEV2A82WeAiZHKH7S3dGKr14phJqpPe5hKzID3RXU09FO4VPwflFVyJ9dr85uj2UUuOCtKxVomTXalNJjlt4YJaMuhSDYE9UtUSXPKNiY1SlVmXO61EUpx4/Eui3Zc3U+ny1xypQhG/LoDHisDDl5/z8z8fBn9px/d2XM66aRouyz/+wOg7Rt/D7xgtf8zn4dNsdqr6djlz6PLUnE9Te5v+Som/6q+U+IqMx9Zn4+3yOL3VrW+nb/X5PF2msRr+l/Y2ju1p+vY36dF0h5NdzpLz6eXw+jSM7Us7tqemvSxn//r30yf1If4F+T/4h/DjCtPZtZ/hdjy/1G/fb/e34WzvL3j6x0t3eDk9/ScAAP//RKCmWQEHAAA=" | base64 -d | gunzip
+
