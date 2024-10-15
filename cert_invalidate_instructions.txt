@@ -2,15 +2,13 @@
 #If we would like, we can block a particular ca by putting them in the block store
 
 ##First, Create Backups in Controller Node.
-mkdir backup
-mkdir backup
-
 sudo su
 cd /var/lib/k0s/
 mv ./pki/* /home/bsfintech/backup/
-rm -rf pki
+
 
 ##After Removing pki, if the k0scontroller is restarted, the pki is newly generated
+rm -rf pki
 sudo systemctl daemon-reload
 sudo systemctl restart k0scontroller
 
@@ -26,9 +24,6 @@ sudo update-ca-trust extract
 
 sudo systemctl daemon-reload
 sudo systemctl restart k0scontroller
-
-sudo systemctl daemon-reload
-sudo systemctl restart k0sworker 
 
 
 ##Copy Newly generated API ca.crt (the one in /var/lib/k0s/pki folder) to the worker node...
@@ -47,7 +42,12 @@ sudo vi /etc/k0s/k0stoken
 ##This section needs further clarification ig? i don't know which things need to be updated
 cd /var/lib/k0s
 mv ./* /home/bsfintech/backup/
-rm -rf ./*
+##rm -rf ./*
+
+##Delete Everything other than pods and pods resources... because that's where the volumes are..
+rm -rf bin containerd images kubelet-config.yaml kubelet.conf pki worker-profile.yaml
+cd kubelet/
+rm -rf checkpoints/ cpu_manager_state memory_manager_state pki plugins plugins_registry
 
 sudo systemctl daemon-reload
 sudo systemctl restart k0sworker
@@ -62,12 +62,7 @@ sudo update-ca-trust extract
 sudo systemctl daemon-reload
 sudo systemctl restart k0sworker 
 
-
-
-
-
-
-
+##If any of the RBAC was already set up, their kubeconfigs have to be redistributed after deleting their secrets. Because the secrets hold the old ca.
 
 
 #"Nice to haves"
